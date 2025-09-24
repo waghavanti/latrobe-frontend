@@ -1,0 +1,105 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+
+    <a class="navbar-brand" href="#">
+      <img src="assets/Green.png" class="logo-img" alt="GreenLink Logo">
+    </a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+
+        
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="/front">Home</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/About us">About us</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/research">Research</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/Contact us">Contact us</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Dropdown link
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Action</a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          </ul>
+        </li>
+      </ul> 
+    </div>
+  </div>
+</nav>
+
+
+
+
+
+<div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="text-center">
+            <h1>Green Link Portal Sign Up</h1>
+            <h5>You can Sign Up here!</h5>
+          </div>
+          <form [formGroup]="signupForm" (ngSubmit)="signUp()">
+            
+            <div class="mb-3">
+              <label class="form-label">Email address</label>
+              <input formControlName="email" type="email" class="form-control" id="exampleInputEmail1" placeholder="Email address">
+              <!-- Validation error for email -->
+              <div *ngIf="email?.invalid && email?.touched" class="text-danger">
+                <div *ngIf="email?.hasError('required')">Email is required.</div>
+                <div *ngIf="email?.hasError('email')">Please enter a valid email address.</div>
+              </div>
+            </div>
+  
+            <div class="mb-3">
+              <label class="form-label">Name</label>
+              <input formControlName="name" type="text" class="form-control" id="exampleInputName1" placeholder="Name">
+              <!-- Validation error for name -->
+              <div *ngIf="name?.invalid && name?.touched" class="text-danger">
+                <div *ngIf="name?.hasError('required')">Name is required.</div>
+              </div>
+            </div>
+  
+            <div class="mb-3">
+              <label class="form-label">Phone Number</label>
+              <input formControlName="mobile" type="number" class="form-control" id="exampleInputMobile1" placeholder="Phone">
+              <!-- Validation error for mobile -->
+              <div *ngIf="mobile?.invalid && mobile?.touched" class="text-danger">
+                <div *ngIf="mobile?.hasError('required')">Phone number is required.</div>
+                <div *ngIf="mobile?.hasError('pattern')">Please enter a valid 10-digit phone number.</div>
+              </div>
+            </div>
+  
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input formControlName="password" type="password" class="form-control" id="exampleInputPassword1">
+              <!-- Validation error for password -->
+              <div *ngIf="password?.invalid && password?.touched" class="text-danger">
+                <div *ngIf="password?.hasError('required')">Password is required.</div>
+                <div *ngIf="password?.hasError('minlength')">Password must be at least 6 characters long.</div>
+              </div>
+            </div>
+  
+            <button type="submit" class="btn btn-primary" [disabled]="signupForm.invalid">Sign Up</button> <!-- Disable button if form is invalid -->
+          </form>
+          <a style="color: blue; margin-top: 10px;" routerLink="/genlogin">Already a User? Click to Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  

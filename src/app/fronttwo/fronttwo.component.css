@@ -1,0 +1,174 @@
+.logo-img {
+    height: 40px;  /* Adjust height as needed */
+    width: auto;   /* Maintains aspect ratio */
+    max-width: 150px; /* Prevents it from being too large */
+    margin-bottom: 10px;
+  }
+
+
+/* Custom font size for "Connect with Greenlink" */
+.custom-size {
+    font-size: 4rem;  /* Larger than fs-1 */
+}
+
+
+.horizontal-line {
+    width: 100%;  /* Make it span the whole page width */
+    border: 0;
+    border-top: 3px solid #ccc;  /* Light gray color for the line */
+    margin: 0;  /* Remove any default margin */
+    position: absolute;
+    top: 40%;  /* Move it lower, adjust as needed */
+}
+
+.navbar-brand{
+    color:rgb(5, 84, 84);
+    font-weight: bolder;
+    font-family: 'Lucida Sans';
+    font-size: 35px;
+  }
+
+  .navbar-nav .nav-link {
+    font-size: 18px !important;
+}
+
+
+
+.move-down {
+    margin-top: 100px; /* Adjust as needed */
+}
+
+
+
+.pushable {
+    position: fixed;
+    background: transparent;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    outline-offset: 4px;
+    transition: filter 250ms;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    z-index: 9999; /* Ensure buttons are on top */
+
+    display:flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+/* Positioning Buttons with More Space */
+.pushable-a {
+    top: 60%;  /* Centered vertically */
+    left: 300px; /* Positioned on the left */
+    outline-color: deeppink;
+    transform: translateY(-50%); /* Adjusting for centering */
+}
+
+.pushable-b {
+    top: 60%;  /* Centered vertically */
+    right: 300px; /* Positioned on the right */
+    outline-color: rgb(172, 206, 22);
+    transform: translateY(-50%);
+}
+
+/* Temporary Background to Check Visibility */
+.pushable-a {
+    background-color: rgba(255, 0, 0, 0.3); /* Red for debugging */
+}
+
+.pushable-b {
+    background-color: rgba(154, 197, 154, 0.3); /* Green for debugging */
+}
+
+/* Button Shadow */
+.shadow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: hsl(226, 25%, 69%);
+    border-radius: 8px;
+    filter: blur(2px);
+    will-change: transform;
+    transform: translateY(2px);
+    transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+/* Button Edge */
+.edge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    border-radius: 8px;
+    background: linear-gradient(
+        to right,
+        rgb(65, 61, 61) 0%,
+        rgb(88, 84, 84) 8%,  /* Replace previous color with this */
+        rgb(88, 84, 84) 0%,
+        rgb(88, 84, 84) 8%, 
+    );
+    
+}
+
+/* Button Front */
+.front {
+    display: block;
+    position: relative;
+    border-radius: 8px;
+   
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 1rem;
+    transform: translateY(-4px);
+    transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+
+    padding: 100px 120px;  /* Increase padding to make the button larger */
+    font-size: 1.2rem;
+}
+
+/* Different Background Colors for A and B */
+.pushable-a .front {
+    background: #d4edda;
+    color:rgb(88, 84, 84)
+}
+
+.pushable-b .front {
+    background:#cfe2f3;
+    color:rgb(88, 84, 84)
+}
+
+/* Button Hover and Click Effects */
+.pushable:hover {
+    filter: brightness(110%);
+}
+
+.pushable:hover .front {
+    transform: translateY(-6px);
+    transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+}
+
+.pushable:active .front {
+    transform: translateY(-2px);
+    transition: transform 34ms;
+}
+
+.pushable:hover .shadow {
+    transform: translateY(4px);
+    transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+}
+
+.pushable:active .shadow {
+    transform: translateY(1px);
+    transition: transform 34ms;
+}
+
+.pushable:focus:not(:focus-visible) {
+    outline: none;
+}
+
+

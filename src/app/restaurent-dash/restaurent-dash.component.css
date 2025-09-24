@@ -1,0 +1,48 @@
+.logo-img {
+  height: 40px;  /* Adjust height as needed */
+  width: auto;   /* Maintains aspect ratio */
+  max-width: 150px; /* Prevents it from being too large */
+  margin-bottom: 10px;
+}
+
+
+.navbar-brand{
+  color:rgb(5, 84, 84);
+  font-weight: bolder;
+  font-family: 'Lucida Sans';
+  font-size: 35px;
+}
+
+.navbar-nav .nav-link {
+  font-size: 18px !important;
+}
+
+
+
+h2{
+    color:rgb(233, 238, 243);
+}
+.slider{
+    width:100%;
+    height:450px;
+    background-color:rgb(255, 255, 255);
+} 
+
+
+ 
+
+.profile-container {
+    position: absolute; 
+    top: 50px;
+    right: 10px;
+
+    width: 100px;
+    height: 100px;
+ 
+  }
+  
+
+  .profile-container mat-icon {
+    font-size: 20px;  /* Adjust the size as needed */
+  }
+  

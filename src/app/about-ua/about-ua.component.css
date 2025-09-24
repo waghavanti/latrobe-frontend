@@ -1,0 +1,49 @@
+.logo-img {
+    height: 40px;  /* Adjust height as needed */
+    width: auto;   /* Maintains aspect ratio */
+    max-width: 150px; /* Prevents it from being too large */
+    margin-bottom: 10px;
+  }
+  
+  
+  .navbar-brand{
+      color:rgb(5, 84, 84);
+      font-weight: bolder;
+      font-family: 'Lucida Sans';
+      font-size: 35px;
+    }
+  
+    .navbar-nav .nav-link {
+      font-size: 18px !important;
+  }
+  
+
+
+
+
+.title{
+
+    text-align: center;
+   
+    margin-top: 20px;
+
+}
+
+.para{
+   height: auto;
+   width: 80%;
+   background-color:  #d4edda;
+   color:black;
+   margin-top: 20px;
+   padding: 20px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   margin-left: 200px;
+  
+} 
+
+
+
+
+  
