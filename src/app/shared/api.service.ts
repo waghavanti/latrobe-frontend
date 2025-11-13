@@ -4,54 +4,35 @@ import { AuthService } from './auth.service';
 
 import { RestaurentData } from '../restaurent-dash/restaurent.model';
 
-import { Observable, throwError } from 'rxjs';  //  Import Observable
-import { map, catchError, switchMap } from 'rxjs/operators';
-
+import { Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class ApiService {
 
-  private apiUrl = 'http://localhost:3000'; // Define the API URL
-
+  private apiUrl = 'http://localhost:3000'; // JSON Server base URL
 
   constructor(private _http: HttpClient, private authService: AuthService) {}
 
-  // POST request to add a restaurant
+  // -------------------- POSTS (generator wastes) --------------------
+
   postRestaurent(data: any) {
-    return this._http.post<any>("http://localhost:3000/posts", data).pipe(
-      map((res: any) => {
-        return res;
-      })
-    );
+    return this._http.post<any>(`${this.apiUrl}/posts`, data).pipe(map(res => res));
   }
 
-  // GET request to retrieve all restaurant data
   getRestaurent() {
-    return this._http.get<any>("http://localhost:3000/posts").pipe(
-      map((res: any) => {
-        return res;
-      })
-    );
+    return this._http.get<any>(`${this.apiUrl}/posts`).pipe(map(res => res));
   }
 
-  // GET request to retrieve restaurant data by user ID
   getRestaurentByUserId(userId: string) {
-    return this._http.get<any>(`http://localhost:3000/posts?userId=${userId}`).pipe(
-      map((res: any) => {
-        return res;
-      })
-    );
+    return this._http.get<any>(`${this.apiUrl}/posts?userId=${userId}`).pipe(map(res => res));
   }
 
-  // DELETE request to delete a restaurant
   deleteRestaurant(id: string) {
-    return this._http.delete<any>(`http://localhost:3000/posts/${id}`).pipe(
-      map((res: any) => {
-        return res;
-      }),
+    return this._http.delete<any>(`${this.apiUrl}/posts/${id}`).pipe(
+      map(res => res),
       catchError((error: any) => {
         console.error('Delete failed', error);
         throw error;
@@ -59,37 +40,39 @@ export class ApiService {
     );
   }
 
-  // PUT request to update a restaurant
   updateRestaurant(id: number, data: any) {
-    return this._http.put<any>(`http://localhost:3000/posts/${id}`, data).pipe(
-      map((res: any) => {
-        return res;
-      })
-    );
+    return this._http.put<any>(`${this.apiUrl}/posts/${id}`, data).pipe(map(res => res));
   }
 
+  // -------------------- Lists for recycler page --------------------
 
-  // Fetch all generator waste data
   getAllGenerators() {
-    return this._http.get<any[]>(`http://localhost:3000/posts`);
+    return this._http.get<any[]>(`${this.apiUrl}/posts`);
   }
- 
-  
+
   getPosts(): Observable<any[]> {
     return this._http.get<any[]>(`${this.apiUrl}/posts`);
   }
 
-  // Fetch all users from gsignup
+  // Users (generators)
   getUsers(): Observable<any[]> {
     return this._http.get<any[]>(`${this.apiUrl}/gsignup`);
   }
-  
-  
 
- 
+  // Recycler profile by id
+  getRecyclerById(recyclerId: string) {
+    return this._http.get<any>(`${this.apiUrl}/rsignup/${recyclerId}`);
+  }
+
+  // -------------------- Requests (recycler <-> generator) --------------------
+
+  /**
+   * Create a new request from recycler to generator for a waste.
+   * JSON shape is friendly for both generator and recycler queries.
+   */
   sendRequest(
     wasteId: string,
-    userId: string,
+    userId: string,      // generatorId
     recyclerId: string,
     recyclerName: string,
     transportation: string,
@@ -97,43 +80,45 @@ export class ApiService {
     quantity: number
   ): Observable<any> {
     const requestData = {
-      id: this.generateUniqueId(), 
+      id: this.generateUniqueId(),
       wasteId,
-      generatorId: userId,
+      generatorId: userId,      // for generator view: /requests?generatorId=...
+      recyclerId,               // for recycler view:  /requests?recyclerId=...
       recyclerName,
       recycler_info: {
-        recyclerId,
+        recyclerId,             // keep your existing nested object as-is
         transportation,
         address,
         quantity
       },
-      status: "pending"
+      status: 'Pending',        // match UI: 'Pending' | 'Accepted' | 'Rejected'
+      createdAt: new Date().toISOString()
     };
 
     return this._http.post(`${this.apiUrl}/requests`, requestData);
   }
 
-  private generateUniqueId(): string {
-    return Math.random().toString(36).substr(2, 9); 
-  }
-  
-  
-  
-  
-  
-  
-
+  // Generator view: all requests received by this generator
   getRequestsForGenerator(generatorId: string): Observable<any[]> {
     return this._http.get<any[]>(`${this.apiUrl}/requests?generatorId=${generatorId}`);
   }
-  
-  
-  getRecyclerById(recyclerId: string) {
-    return this._http.get<any>(`${this.apiUrl}/rsignup/${recyclerId}`);
+
+  // Recycler view: all requests sent by this recycler (for status on recpage)
+  getRequestsByRecycler(recyclerId: string): Observable<any[]> {
+    return this._http.get<any[]>(`${this.apiUrl}/requests?recyclerId=${recyclerId}`);
   }
-  
 
-  
+  // Update request status (Generator clicks Accept/Reject)
+  updateRequestStatus(
+    requestId: string,
+    status: 'Pending' | 'Accepted' | 'Rejected'
+  ): Observable<any> {
+    return this._http.patch<any>(`${this.apiUrl}/requests/${requestId}`, { status });
+  }
+
+  // -------------------- Utils --------------------
+
+  private generateUniqueId(): string {
+    return Math.random().toString(36).substr(2, 9);
+  }
 }
-
-

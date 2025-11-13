@@ -17,8 +17,10 @@ export class RestaurentDashComponent implements OnInit {
   showBtn!: boolean;
   isEditMode: boolean = false;  // Flag for edit mode
   userId: string = '';  // Variable to store userId
-
   logged: string | null = '';
+
+  // 🔍 Added for search
+  searchText: string = '';
 
   constructor(
     private formbuilder: FormBuilder,
@@ -35,10 +37,8 @@ export class RestaurentDashComponent implements OnInit {
     });
 
     this.logged = localStorage.getItem('loggeduser') || 'Guest';
-    // Get the userId from localStorage (or your authentication service)
-    this.userId = localStorage.getItem('userId') || '';  // Assuming user ID is stored in localStorage
+    this.userId = localStorage.getItem('userId') || '';  
 
-    // If userId is not found, redirect to login page
     if (!this.userId) {
       this.router.navigate(['/genlogin']);
     }
@@ -49,14 +49,13 @@ export class RestaurentDashComponent implements OnInit {
   logout(): void {
     localStorage.removeItem('loggeduser');
     localStorage.removeItem('userId');
-    window.location.href = '/genlogin'; // Redirect to login page
+    window.location.href = '/genlogin';
   }
 
-  // Fetch restaurant data for the logged-in user
   getRestaurentDataForUser() {
     this.api.getRestaurentByUserId(this.userId).subscribe(
       (res) => {
-        console.log("Fetched Wastes:", res);  // Debugging
+        console.log("Fetched Wastes:", res);
         this.allRestaurentData = res;
       },
       (err) => {
@@ -69,8 +68,6 @@ export class RestaurentDashComponent implements OnInit {
     const wasteItem = this.allRestaurentData.find((waste: any) => waste.id === wasteId);
     return wasteItem ? wasteItem.Transportation : "Unknown"; 
   }
-  
- 
 
   clickAddResto() {
     this.formValue.reset();
@@ -87,7 +84,7 @@ export class RestaurentDashComponent implements OnInit {
     
     this.restaurentModelObj = {
       ...this.formValue.value,
-      userId: this.userId,  // Attach userId
+      userId: this.userId,  
     };
   
     this.api.postRestaurent(this.restaurentModelObj).subscribe(
@@ -104,8 +101,6 @@ export class RestaurentDashComponent implements OnInit {
     );
   } 
 
-  
-
   deleteResto(data: any) {
     if (!data.id) {
       alert("Error: No Waste ID found for deletion.");
@@ -116,7 +111,7 @@ export class RestaurentDashComponent implements OnInit {
       this.api.deleteRestaurant(data.id).subscribe(
         (res) => {
           alert('Waste Deleted Successfully');
-          this.getRestaurentDataForUser();  // Refresh the data after deletion
+          this.getRestaurentDataForUser();
         },
         (err) => {
           console.log("Delete Error:", err);
@@ -131,7 +126,6 @@ export class RestaurentDashComponent implements OnInit {
     this.showAdd = false;
     this.showBtn = true;
   
-    // Ensure the correct ID is set before updating
     this.restaurentModelObj.id = data.id;  
     this.formValue.controls['Waste_Type'].setValue(data.Waste_Type);
     this.formValue.controls['Description'].setValue(data.Description);
@@ -139,7 +133,6 @@ export class RestaurentDashComponent implements OnInit {
     this.formValue.controls['Address'].setValue(data.Address);
   }
   
-
   updateResto() {
     if (!this.restaurentModelObj.id) {
       alert("Error: No Waste selected for update.");
@@ -151,14 +144,14 @@ export class RestaurentDashComponent implements OnInit {
       Description: this.formValue.value.Description,
       Transportation: this.formValue.value.Transportation,
       Address: this.formValue.value.Address,
-      userId: this.userId,  // Ensure the userId is passed as well
+      userId: this.userId,
     };
   
     this.api.updateRestaurant(this.restaurentModelObj.id, updatedData).subscribe(
       (res) => {
         alert('Waste Updated Successfully');
         document.getElementById('close')?.click();
-        this.getRestaurentDataForUser();  // Reload data after update
+        this.getRestaurentDataForUser();
       },
       (err) => {
         console.log(err);
@@ -167,5 +160,13 @@ export class RestaurentDashComponent implements OnInit {
     );
   }
 
-  
+  // 🔍 Bare minimum search filter logic
+  get filteredWasteList() {
+    if (!this.searchText) {
+      return this.allRestaurentData;
+    }
+    return this.allRestaurentData.filter((item: any) =>
+      item.Waste_Type.toLowerCase().includes(this.searchText.toLowerCase())
+    );
+  }
 }

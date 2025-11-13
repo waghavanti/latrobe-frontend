@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
 
-     <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="#">
       <img src="assets/Green.png" class="logo-img" alt="GreenLink Logo">
     </a>
     
@@ -44,11 +44,6 @@
   </div>
 </nav>
 
-
-
-
-
-
 <div class="profile-container">
   <button mat-icon-button [matMenuTriggerFor]="profileMenu">
     <mat-icon>account_circle</mat-icon>
@@ -61,9 +56,13 @@
   </mat-menu>
 </div>
 
+<!-- 🔍 Search box -->
+<div class="container mt-4">
+  <input type="text" placeholder="Search waste..." [(ngModel)]="searchText" class="form-control">
+</div>
 
-<!-- Table displaying restaurant data -->
-<table class="table mt-5">
+<!-- Table displaying waste data -->
+<table class="table mt-3">
   <thead>
     <tr>
       <th scope="col">Generator Id</th>
@@ -75,22 +74,22 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let data of allRestaurentData">
+    <tr *ngFor="let data of filteredWasteList">
       <td>{{ data.id }}</td>
       <td>{{ data.Waste_Type }}</td>
       <td>{{ data.Description }}</td>
-      <td>{{ data.Transportation}}</td>
-      <td>{{ data.Address}}</td>
+      <td>{{ data.Transportation }}</td>
+      <td>{{ data.Address }}</td>
       <td>
         <!-- Edit and Delete buttons -->
         <button (click)="onEditResto(data)" class="btn btn-info" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</button> &nbsp;
-        <button (click)="deleteResto(data)" class="btn btn-danger" >Delete</button>
+        <button (click)="deleteResto(data)" class="btn btn-danger">Delete</button>
       </td>
     </tr>
   </tbody>
 </table>
- 
-<!-- Modal for Add/Edit Restaurant -->
+
+<!-- Modal for Add/Edit Waste -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -99,27 +98,23 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <!-- Form for restaurant details -->
         <form [formGroup]="formValue">
           <div class="mb-3">
             <label class="form-label">Waste_Type</label>
-            <input type="text" class="form-control" formControlName="Waste_Type" placeholder="Metallic,Plastic" required />
+            <input type="text" class="form-control" formControlName="Waste_Type" placeholder="Metallic, Plastic" required />
           </div>
           <div class="mb-3">
-            <label class="form-label"> Description</label>
-            <input type="text" class="form-control" formControlName="Description"  required />
-
-          </div> <div class="mb-3">
-            <label class="form-label"> Transportation</label>
-            <input type="text" class="form-control" formControlName="Transportation"  required />
+            <label class="form-label">Description</label>
+            <input type="text" class="form-control" formControlName="Description" required />
           </div>
-
+          <div class="mb-3">
+            <label class="form-label">Transportation</label>
+            <input type="text" class="form-control" formControlName="Transportation" required />
+          </div>
           <div class="mb-3">
             <label class="form-label">Address</label>
-            <input type="text" class="form-control" formControlName="Address"  required />
+            <input type="text" class="form-control" formControlName="Address" required />
           </div>
-         
-        
         </form>
       </div>
       <div class="modal-footer">
