@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-gensignup',
@@ -11,7 +12,6 @@ import { Router } from '@angular/router';
 export class GensignupComponent implements OnInit {
 
   signupForm!: FormGroup;
-  private apiUrl = 'http://localhost:5000/api';
 
   constructor(
     private fb: FormBuilder,
@@ -25,23 +25,25 @@ export class GensignupComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      role: ['generator']   // ✅ FIXED ROLE
+      role: ['generator']   // ✅ fixed role
     });
   }
 
   signUp() {
     if (this.signupForm.invalid) return;
 
-    this.http.post(`${this.apiUrl}/users/register`, this.signupForm.value)
-      .subscribe({
-        next: () => {
-          alert('Generator registered successfully');
-          this.signupForm.reset();
-          this.router.navigate(['/genlogin']);
-        },
-        error: (err) => {
-          alert(err.error?.message || 'Signup failed');
-        }
-      });
+    this.http.post(
+      `${environment.apiUrl}/api/users/register`,
+      this.signupForm.value
+    ).subscribe({
+      next: () => {
+        alert('Generator registered successfully');
+        this.signupForm.reset();
+        this.router.navigate(['/genlogin']);
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Signup failed');
+      }
+    });
   }
 }

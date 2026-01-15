@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-recsignup',
@@ -11,7 +12,6 @@ import { Router } from '@angular/router';
 export class RecsignupComponent implements OnInit {
 
   signupForm!: FormGroup;
-  private apiUrl = 'http://localhost:5000/api';
 
   constructor(
     private formbuilder: FormBuilder,
@@ -25,7 +25,7 @@ export class RecsignupComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      role: ['recycler']   // ✅ THIS IS THE KEY
+      role: ['recycler']   // ✅ fixed role
     });
   }
 
@@ -35,17 +35,19 @@ export class RecsignupComponent implements OnInit {
       return;
     }
 
-    this.http.post(`${this.apiUrl}/users/register`, this.signupForm.value)
-      .subscribe({
-        next: () => {
-          alert('Recycler Signup Successful');
-          this.signupForm.reset();
-          this.router.navigate(['/reclogin']);
-        },
-        error: (err) => {
-          alert(err.error?.message || 'Signup failed');
-        }
-      });
+    this.http.post(
+      `${environment.apiUrl}/api/users/register`,
+      this.signupForm.value
+    ).subscribe({
+      next: () => {
+        alert('Recycler Signup Successful');
+        this.signupForm.reset();
+        this.router.navigate(['/reclogin']);
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Signup failed');
+      }
+    });
   }
 
   // getters (for validation messages – KEEP UI SAME)

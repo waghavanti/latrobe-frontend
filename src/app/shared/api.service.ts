@@ -1,13 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  private baseUrl = 'http://localhost:5000/api';
+  // ✅ SINGLE SOURCE OF BACKEND URL
+  private baseUrl = `${environment.apiUrl}/api`;
 
   constructor(private http: HttpClient) {}
 
@@ -23,12 +25,11 @@ export class ApiService {
     return this.http.get<any[]>(`${this.baseUrl}/waste`);
   }
 
- getWastesByGenerator(generatorId: string) {
-  return this.http.get<any[]>(
-    `${this.baseUrl}/waste/generator/${generatorId}`
-  );
-}
-
+  getWastesByGenerator(generatorId: string) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/waste/generator/${generatorId}`
+    );
+  }
 
   acceptWaste(wasteId: string, recyclerId: string): Observable<any> {
     return this.http.put(
@@ -44,7 +45,7 @@ export class ApiService {
     );
   }
 
-  // ================= AUTH =================
+  // ================= AUTH APIs =================
 
   login(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/users/login`, data);
@@ -54,8 +55,48 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/users/register`, data);
   }
 
-  // ================= TEMP STUBS =================
-  
+  // ================= REQUEST APIs =================
+
+  // 🔹 SEND REQUEST
+  sendRequest(payload: any) {
+    return this.http.post(
+      `${this.baseUrl}/requests/send`,
+      payload
+    );
+  }
+
+  // 🔹 GET REQUESTS FOR GENERATOR
+  getRequestsForGenerator(generatorId: string) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/requests/generator/${generatorId}`
+    );
+  }
+
+  // 🔹 ACCEPT REQUEST
+  acceptRequest(requestId: string) {
+    return this.http.put(
+      `${this.baseUrl}/requests/accept/${requestId}`,
+      {}
+    );
+  }
+
+  // 🔹 GET REQUESTS FOR RECYCLER
+  getRequestsByRecycler(recyclerId: string) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/requests/recycler/${recyclerId}`
+    );
+  }
+
+  // ================= WASTE =================
+
+  markWasteAccepted(wasteId: string) {
+    return this.http.put(
+      `${this.baseUrl}/waste/accept/${wasteId}`,
+      {}   // backend already knows what to do
+    );
+  }
+
+  // ================= TEMP STUBS (KEEP AS IS) =================
 
   getRecyclerById(_: string) {
     return of({});
@@ -64,50 +105,4 @@ export class ApiService {
   updateRequestStatus(_: string, __: string) {
     return of({});
   }
-
-  // 🔹 SEND REQUEST
-sendRequest(payload: any) {
-  return this.http.post(
-    'http://localhost:5000/api/requests/send',
-    payload
-  );
-}
-
-
-// 🔹 GET REQUESTS FOR GENERATOR
-getRequestsForGenerator(generatorId: string) {
-  return this.http.get<any[]>(
-    `http://localhost:5000/api/requests/generator/${generatorId}`
-  );
-}
-
-
-acceptRequest(requestId: string) {
-  return this.http.put(
-    `${this.baseUrl}/requests/accept/${requestId}`,
-    {}
-  );
-}
-
-
-// ================= REQUEST APIs =================
-
-// Get all requests sent by a recycler
-getRequestsByRecycler(recyclerId: string) {
-  return this.http.get<any[]>(
-    `${this.baseUrl}/requests/recycler/${recyclerId}`
-  );
-}
-
-
-// ================= WASTE =================
-markWasteAccepted(wasteId: string) {
-  return this.http.put(
-    `${this.baseUrl}/waste/accept/${wasteId}`,
-    {}   // backend already knows what to do
-  );
-}
-
-
-
 }

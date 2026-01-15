@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-reclogin',
@@ -11,7 +12,6 @@ import { HttpClient } from '@angular/common/http';
 export class RecloginComponent implements OnInit {
 
   loginForm!: FormGroup;
-  private apiUrl = 'http://localhost:5000/api';
 
   constructor(
     private formbuilder: FormBuilder,
@@ -29,33 +29,35 @@ export class RecloginComponent implements OnInit {
   logIn() {
     if (this.loginForm.invalid) return;
 
-    this.http.post<any>(`${this.apiUrl}/users/login`, this.loginForm.value)
-      .subscribe({
-        next: (res) => {
+    this.http.post<any>(
+      `${environment.apiUrl}/api/users/login`,
+      this.loginForm.value
+    ).subscribe({
+      next: (res) => {
 
-          // 🔴 MOST IMPORTANT LINE
+        // 🔴 Clear previous data
+        localStorage.clear();
+
+        // ✅ Store standardized keys
+        localStorage.setItem('userId', res.userId);
+        localStorage.setItem('role', res.role); // recycler | generator
+        localStorage.setItem('name', res.name);
+        localStorage.setItem('email', res.email);
+        localStorage.setItem('contact', res.contact ?? '');
+
+        alert('Login successful');
+
+        if (res.role === 'recycler') {
+          this.router.navigate(['/recpage']);
+        } else {
+          alert('Not a recycler account');
           localStorage.clear();
-
-          // ✅ Store ONLY standardized keys
-          localStorage.setItem('userId', res.userId);
-          localStorage.setItem('role', res.role); // recycler | generator
-          localStorage.setItem('name', res.name);
-          localStorage.setItem('email', res.email);
-          localStorage.setItem('contact', res.contact ?? '');
-
-          alert('Login successful');
-
-          if (res.role === 'recycler') {
-            this.router.navigate(['/recpage']);
-          } else {
-            alert('Not a recycler account');
-            localStorage.clear();
-          }
-        },
-        error: () => {
-          alert('Invalid email or password');
         }
-      });
+      },
+      error: () => {
+        alert('Invalid email or password');
+      }
+    });
   }
 
   // Getters
