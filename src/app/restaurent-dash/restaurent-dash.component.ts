@@ -1,172 +1,91 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../shared/api.service';
-import { RestaurentData } from './restaurent.model';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-restaurent-dash',
   templateUrl: './restaurent-dash.component.html',
-  styleUrls: ['./restaurent-dash.component.css'],
+  styleUrls: ['./restaurent-dash.component.css']
 })
 export class RestaurentDashComponent implements OnInit {
-  formValue!: FormGroup;
-  restaurentModelObj: RestaurentData = new RestaurentData();
-  allRestaurentData: any = [];  // Ensure this is initialized as an array
-  showAdd!: boolean;
-  showBtn!: boolean;
-  isEditMode: boolean = false;  // Flag for edit mode
-  userId: string = '';  // Variable to store userId
-  logged: string | null = '';
 
-  // 🔍 Added for search
+  formValue!: FormGroup;
+  allRestaurentData: any[] = [];
   searchText: string = '';
 
   constructor(
-    private formbuilder: FormBuilder,
-    private api: ApiService,
-    private router: Router
+    private fb: FormBuilder,
+    private api: ApiService
   ) {}
 
   ngOnInit(): void {
-    this.formValue = this.formbuilder.group({
-      Waste_Type: [''],
+    this.formValue = this.fb.group({
+      Waste_Type: ['', Validators.required],
       Description: [''],
       Transportation: [''],
-      Address: ['']
+      Address: ['', Validators.required]
     });
 
-    this.logged = localStorage.getItem('loggeduser') || 'Guest';
-    this.userId = localStorage.getItem('userId') || '';  
-
-    if (!this.userId) {
-      this.router.navigate(['/genlogin']);
-    }
-
-    this.getRestaurentDataForUser();
+    this.loadWastes();
   }
 
-  logout(): void {
-    localStorage.removeItem('loggeduser');
-    localStorage.removeItem('userId');
-    window.location.href = '/genlogin';
-  }
+  // ================= LOAD GENERATOR WASTES =================
+  loadWastes() {
+    const generatorId = localStorage.getItem('userId');
+    if (!generatorId) return;
 
-  getRestaurentDataForUser() {
-    this.api.getRestaurentByUserId(this.userId).subscribe(
-      (res) => {
-        console.log("Fetched Wastes:", res);
-        this.allRestaurentData = res;
+    this.api.getWastesByGenerator(generatorId).subscribe({
+      next: (data) => {
+        this.allRestaurentData = data;
       },
-      (err) => {
-        console.log("Fetch Error:", err);
+      error: (err) => {
+        console.error('Failed to load wastes', err);
       }
-    );
+    });
   }
 
-  getTransportationStatus(wasteId: string): string {
-    const wasteItem = this.allRestaurentData.find((waste: any) => waste.id === wasteId);
-    return wasteItem ? wasteItem.Transportation : "Unknown"; 
-  }
-
-  clickAddResto() {
-    this.formValue.reset();
-    this.isEditMode = false;
-    this.showAdd = true;
-    this.showBtn = true;
-  }
-
+  // ================= ADD WASTE =================
   addRestaurent() {
     if (this.formValue.invalid) {
-      alert("Please fill all required fields!");
+      alert('Please fill required fields');
       return;
     }
-    
-    this.restaurentModelObj = {
-      ...this.formValue.value,
-      userId: this.userId,  
+
+    const generatorId = localStorage.getItem('userId');
+    if (!generatorId) {
+      alert('Generator not logged in');
+      return;
+    }
+
+    // ✅ BACKEND-READY PAYLOAD
+    const payload = {
+      wasteType: this.formValue.value.Waste_Type,
+      quantity: 10,
+      location: this.formValue.value.Address,
+      generatorId: generatorId
     };
-  
-    this.api.postRestaurent(this.restaurentModelObj).subscribe(
-      (res) => {
-        alert("Waste Added Successfully");
+
+    console.log('🚀 Final payload:', payload);
+
+    this.api.addWaste(payload).subscribe({
+      next: () => {
+        alert('Waste Added Successfully');
         this.formValue.reset();
-        document.getElementById("close")?.click();
-        this.getRestaurentDataForUser();
+        this.loadWastes();
       },
-      (err) => {
-        console.log(err);
-        alert("Waste Addition Failed!");
+      error: (err) => {
+        console.error('❌ Add waste error:', err.error);
+        alert('Waste Addition Failed');
       }
-    );
-  } 
-
-  deleteResto(data: any) {
-    if (!data.id) {
-      alert("Error: No Waste ID found for deletion.");
-      return;
-    }
-  
-    if (confirm('Are you sure you want to delete this Waste?')) {
-      this.api.deleteRestaurant(data.id).subscribe(
-        (res) => {
-          alert('Waste Deleted Successfully');
-          this.getRestaurentDataForUser();
-        },
-        (err) => {
-          console.log("Delete Error:", err);
-          alert('Failed to delete Waste!');
-        }
-      );
-    }
-  }
-  
-  onEditResto(data: any) {
-    this.isEditMode = true;
-    this.showAdd = false;
-    this.showBtn = true;
-  
-    this.restaurentModelObj.id = data.id;  
-    this.formValue.controls['Waste_Type'].setValue(data.Waste_Type);
-    this.formValue.controls['Description'].setValue(data.Description);
-    this.formValue.controls['Transportation'].setValue(data.Transportation);
-    this.formValue.controls['Address'].setValue(data.Address);
-  }
-  
-  updateResto() {
-    if (!this.restaurentModelObj.id) {
-      alert("Error: No Waste selected for update.");
-      return;
-    }
-  
-    const updatedData = {
-      Waste_Type: this.formValue.value.Waste_Type,
-      Description: this.formValue.value.Description,
-      Transportation: this.formValue.value.Transportation,
-      Address: this.formValue.value.Address,
-      userId: this.userId,
-    };
-  
-    this.api.updateRestaurant(this.restaurentModelObj.id, updatedData).subscribe(
-      (res) => {
-        alert('Waste Updated Successfully');
-        document.getElementById('close')?.click();
-        this.getRestaurentDataForUser();
-      },
-      (err) => {
-        console.log(err);
-        alert('Waste Update Failed!');
-      }
-    );
+    });
   }
 
-  // 🔍 Bare minimum search filter logic
-  get filteredWasteList() {
-    if (!this.searchText) {
-      return this.allRestaurentData;
-    }
-    return this.allRestaurentData.filter((item: any) =>
-      item.Waste_Type.toLowerCase().includes(this.searchText.toLowerCase())
+  // ================= FILTER =================
+  get filteredWasteList(): any[] {
+    if (!this.searchText) return this.allRestaurentData;
+
+    return this.allRestaurentData.filter(item =>
+      item.wasteType?.toLowerCase().includes(this.searchText.toLowerCase())
     );
   }
 }

@@ -55,48 +55,36 @@
             <h5>You can Sign Up here!</h5>
           </div>
           <form [formGroup]="signupForm" (ngSubmit)="signUp()">
-            
-            <div class="mb-3">
-              <label class="form-label">Email address</label>
-              <input formControlName="email" type="email" class="form-control" id="exampleInputEmail1" placeholder="Email address">
-              <!-- Validation error for email -->
-              <div *ngIf="email?.invalid && email?.touched" class="text-danger">
-                <div *ngIf="email?.hasError('required')">Email is required.</div>
-                <div *ngIf="email?.hasError('email')">Please enter a valid email address.</div>
-              </div>
-            </div>
-  
-            <div class="mb-3">
-              <label class="form-label">Name</label>
-              <input formControlName="name" type="text" class="form-control" id="exampleInputName1" placeholder="Name">
-              <!-- Validation error for name -->
-              <div *ngIf="name?.invalid && name?.touched" class="text-danger">
-                <div *ngIf="name?.hasError('required')">Name is required.</div>
-              </div>
-            </div>
-  
-            <div class="mb-3">
-              <label class="form-label">Phone Number</label>
-              <input formControlName="mobile" type="number" class="form-control" id="exampleInputMobile1" placeholder="Phone">
-              <!-- Validation error for mobile -->
-              <div *ngIf="mobile?.invalid && mobile?.touched" class="text-danger">
-                <div *ngIf="mobile?.hasError('required')">Phone number is required.</div>
-                <div *ngIf="mobile?.hasError('pattern')">Please enter a valid 10-digit phone number.</div>
-              </div>
-            </div>
-  
-            <div class="mb-3">
-              <label class="form-label">Password</label>
-              <input formControlName="password" type="password" class="form-control" id="exampleInputPassword1">
-              <!-- Validation error for password -->
-              <div *ngIf="password?.invalid && password?.touched" class="text-danger">
-                <div *ngIf="password?.hasError('required')">Password is required.</div>
-                <div *ngIf="password?.hasError('minlength')">Password must be at least 6 characters long.</div>
-              </div>
-            </div>
-  
-            <button type="submit" class="btn btn-primary" [disabled]="signupForm.invalid">Sign Up</button> <!-- Disable button if form is invalid -->
-          </form>
+
+  <div class="mb-3">
+    <label>Email</label>
+    <input type="email" class="form-control" formControlName="email">
+  </div>
+
+  <div class="mb-3">
+    <label>Name</label>
+    <input type="text" class="form-control" formControlName="name">
+  </div>
+
+  <div class="mb-3">
+    <label>Phone</label>
+    <input type="number" class="form-control" formControlName="mobile">
+  </div>
+
+  <div class="mb-3">
+    <label>Password</label>
+    <input type="password" class="form-control" formControlName="password">
+  </div>
+
+  <!-- 🔒 ROLE FIXED AS GENERATOR -->
+  <input type="hidden" formControlName="role">
+
+  <button class="btn btn-primary" type="submit">
+    Sign Up
+  </button>
+
+</form>
+
           <a style="color: blue; margin-top: 10px;" routerLink="/genlogin">Already a User? Click to Login</a>
         </div>
       </div>

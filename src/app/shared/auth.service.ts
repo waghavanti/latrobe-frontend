@@ -1,3 +1,5 @@
+
+
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -7,8 +9,12 @@ export class AuthService {
   constructor() {}
 
   // Get the logged-in user ID from local storage
-  getUserId(): string {
-    return localStorage.getItem('userId') || '';
+ getUserId(): string | null {
+    return localStorage.getItem('userId');
+  }
+
+  getRole(): string | null {
+    return localStorage.getItem('role');
   }
 
   // Check if user is logged in

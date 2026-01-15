@@ -1,124 +1,113 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AuthService } from './auth.service';
-
-import { RestaurentData } from '../restaurent-dash/restaurent.model';
-
-import { Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  private apiUrl = 'http://localhost:3000'; // JSON Server base URL
+  private baseUrl = 'http://localhost:5000/api';
 
-  constructor(private _http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient) {}
 
-  // -------------------- POSTS (generator wastes) --------------------
+  // ================= WASTE APIs =================
 
-  postRestaurent(data: any) {
-    return this._http.post<any>(`${this.apiUrl}/posts`, data).pipe(map(res => res));
+  // ✅ DO NOT MODIFY PAYLOAD HERE
+  addWaste(payload: any): Observable<any> {
+    console.log('📡 API sending payload:', payload);
+    return this.http.post(`${this.baseUrl}/waste/add`, payload);
   }
 
-  getRestaurent() {
-    return this._http.get<any>(`${this.apiUrl}/posts`).pipe(map(res => res));
+  getAllWastes(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/waste`);
   }
 
-  getRestaurentByUserId(userId: string) {
-    return this._http.get<any>(`${this.apiUrl}/posts?userId=${userId}`).pipe(map(res => res));
-  }
+ getWastesByGenerator(generatorId: string) {
+  return this.http.get<any[]>(
+    `${this.baseUrl}/waste/generator/${generatorId}`
+  );
+}
 
-  deleteRestaurant(id: string) {
-    return this._http.delete<any>(`${this.apiUrl}/posts/${id}`).pipe(
-      map(res => res),
-      catchError((error: any) => {
-        console.error('Delete failed', error);
-        throw error;
-      })
+
+  acceptWaste(wasteId: string, recyclerId: string): Observable<any> {
+    return this.http.put(
+      `${this.baseUrl}/waste/accept/${wasteId}`,
+      { recyclerId }
     );
   }
 
-  updateRestaurant(id: number, data: any) {
-    return this._http.put<any>(`${this.apiUrl}/posts/${id}`, data).pipe(map(res => res));
+  rejectWaste(wasteId: string): Observable<any> {
+    return this.http.put(
+      `${this.baseUrl}/waste/reject/${wasteId}`,
+      {}
+    );
   }
 
-  // -------------------- Lists for recycler page --------------------
+  // ================= AUTH =================
 
-  getAllGenerators() {
-    return this._http.get<any[]>(`${this.apiUrl}/posts`);
+  login(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/users/login`, data);
   }
 
-  getPosts(): Observable<any[]> {
-    return this._http.get<any[]>(`${this.apiUrl}/posts`);
+  register(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/users/register`, data);
   }
 
-  // Users (generators)
-  getUsers(): Observable<any[]> {
-    return this._http.get<any[]>(`${this.apiUrl}/gsignup`);
+  // ================= TEMP STUBS =================
+  
+
+  getRecyclerById(_: string) {
+    return of({});
   }
 
-  // Recycler profile by id
-  getRecyclerById(recyclerId: string) {
-    return this._http.get<any>(`${this.apiUrl}/rsignup/${recyclerId}`);
+  updateRequestStatus(_: string, __: string) {
+    return of({});
   }
 
-  // -------------------- Requests (recycler <-> generator) --------------------
+  // 🔹 SEND REQUEST
+sendRequest(payload: any) {
+  return this.http.post(
+    'http://localhost:5000/api/requests/send',
+    payload
+  );
+}
 
-  /**
-   * Create a new request from recycler to generator for a waste.
-   * JSON shape is friendly for both generator and recycler queries.
-   */
-  sendRequest(
-    wasteId: string,
-    userId: string,      // generatorId
-    recyclerId: string,
-    recyclerName: string,
-    transportation: string,
-    address: string,
-    quantity: number
-  ): Observable<any> {
-    const requestData = {
-      id: this.generateUniqueId(),
-      wasteId,
-      generatorId: userId,      // for generator view: /requests?generatorId=...
-      recyclerId,               // for recycler view:  /requests?recyclerId=...
-      recyclerName,
-      recycler_info: {
-        recyclerId,             // keep your existing nested object as-is
-        transportation,
-        address,
-        quantity
-      },
-      status: 'Pending',        // match UI: 'Pending' | 'Accepted' | 'Rejected'
-      createdAt: new Date().toISOString()
-    };
 
-    return this._http.post(`${this.apiUrl}/requests`, requestData);
-  }
+// 🔹 GET REQUESTS FOR GENERATOR
+getRequestsForGenerator(generatorId: string) {
+  return this.http.get<any[]>(
+    `http://localhost:5000/api/requests/generator/${generatorId}`
+  );
+}
 
-  // Generator view: all requests received by this generator
-  getRequestsForGenerator(generatorId: string): Observable<any[]> {
-    return this._http.get<any[]>(`${this.apiUrl}/requests?generatorId=${generatorId}`);
-  }
 
-  // Recycler view: all requests sent by this recycler (for status on recpage)
-  getRequestsByRecycler(recyclerId: string): Observable<any[]> {
-    return this._http.get<any[]>(`${this.apiUrl}/requests?recyclerId=${recyclerId}`);
-  }
+acceptRequest(requestId: string) {
+  return this.http.put(
+    `${this.baseUrl}/requests/accept/${requestId}`,
+    {}
+  );
+}
 
-  // Update request status (Generator clicks Accept/Reject)
-  updateRequestStatus(
-    requestId: string,
-    status: 'Pending' | 'Accepted' | 'Rejected'
-  ): Observable<any> {
-    return this._http.patch<any>(`${this.apiUrl}/requests/${requestId}`, { status });
-  }
 
-  // -------------------- Utils --------------------
+// ================= REQUEST APIs =================
 
-  private generateUniqueId(): string {
-    return Math.random().toString(36).substr(2, 9);
-  }
+// Get all requests sent by a recycler
+getRequestsByRecycler(recyclerId: string) {
+  return this.http.get<any[]>(
+    `${this.baseUrl}/requests/recycler/${recyclerId}`
+  );
+}
+
+
+// ================= WASTE =================
+markWasteAccepted(wasteId: string) {
+  return this.http.put(
+    `${this.baseUrl}/waste/accept/${wasteId}`,
+    {}   // backend already knows what to do
+  );
+}
+
+
+
 }

@@ -1,74 +1,62 @@
+/* ================= LOGO & NAVBAR ================= */
+
 .logo-img {
-  height: 40px;  /* Adjust height as needed */
-  width: auto;   /* Maintains aspect ratio */
-  max-width: 150px; /* Prevents it from being too large */
-  margin-bottom: 10px;
+  height: 40px;
+  width: auto;
+  max-width: 150px;
 }
 
-
-.navbar-brand{
-    color:rgb(5, 84, 84);
-    font-weight: bolder;
-    font-family: 'Lucida Sans';
-    font-size: 35px;
-  }
-
-  .navbar-nav .nav-link {
-    font-size: 18px !important;
+.navbar-brand {
+  color: rgb(5, 84, 84);
+  font-weight: bolder;
+  font-family: 'Lucida Sans';
+  font-size: 35px;
 }
 
-
-
-
-   
-.slider{
-    width:100%;
-    height:450px;
-    background-color:rgb(255, 255, 255);
+.navbar-nav .nav-link {
+  font-size: 18px !important;
 }
 
+/* ================= HEADING ================= */
 
 h3.text-center {
-    font-size: 28px; /* Change Font Size */
-    font-weight: bold; /* Make it Bold */
-    color: #007bff; /* Change Text Color (Bootstrap Primary) */
-    font-family: 'Poppins', sans-serif; /* Change Font */
-    text-transform: uppercase; /* Uppercase for better visibility */
-    letter-spacing: 1px; /* Add Spacing for better readability */
-    margin-bottom: 50px;
-    margin-top: 40px;
-  }
-  
+  font-size: 28px;
+  font-weight: bold;
+  color: #007bff;
+  font-family: 'Poppins', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
 
- 
+/* ================= PROFILE ICON ================= */
 
 .profile-container {
-    position: absolute;  /* or use 'fixed' if you want it to stay even when scrolling */
-    top: 50px;  /* Adjust vertical position */
-    right: 20px;  /* Move it to the right side */
-    
-    display: flex;  /* Ensures alignment */
-    align-items: center; 
-    justify-content: center; 
-
-    
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-container button {
-    width: 50px;  
-    height: 50px;
-    border-radius: 50%;  /* Make it a circular button */
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
 }
 
 .profile-container mat-icon {
-    font-size: 40px; /* Increase icon size */
+  font-size: 40px;
 }
 
+/* ================= TOOLTIP ================= */
+
 .custom-tooltip .mat-mdc-tooltip {
-  
-  white-space: pre-wrap !important; /* ✅ Ensures proper line breaks */
+  white-space: pre-wrap !important;
   max-width: 250px;
-  font-size: 16px;
+  font-size: 15px;
   background: rgba(0, 0, 0, 0.9);
   color: #fff;
   padding: 10px;
@@ -77,81 +65,74 @@ h3.text-center {
   line-height: 1.5;
 }
 
-  
+/* ================= TABLE STYLING ================= */
 
-
-  /* Waste Data Table Styling */
 .table {
-    border-radius: 12px;
-    overflow: hidden;
-    border-collapse: separate;
-    border-spacing: 0;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .table thead {
-    background-color: #198754 !important; /* Green Theme */
-    color: white !important;
-    font-size: 16px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  
-  th {
-    padding: 15px;
-  }
-  
-  td {
-    padding: 12px;
-    vertical-align: middle;
-    font-size: 15px;
-  }
-  
-  .table-hover tbody tr:hover {
-    background-color: #f1f8e9 !important; /* Light green hover */
-    transition: 0.3s ease-in-out;
-  }
-  
-  /* Buttons */
-  .btn-info, .btn-outline-success {
-    font-size: 14px;
-    padding: 6px 10px;
-  }
-  
-  .btn-info mat-icon, 
-  .btn-outline-success mat-icon {
-    font-size: 20px;
-  }
-  
+  border-radius: 12px;
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
 
+.table thead {
+  background-color: #198754 !important;
+  color: white !important;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
+th {
+  padding: 15px;
+}
 
-  .request-form-container {
-    flex: 1; /* Takes less space */
-    max-width: 350px; /* Adjust form width */
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    background-color: #f8f9fa;
-    margin-top: 120px;
-  }
-  
-  .request-form h4 {
-    text-align: center;
-    margin-bottom: 15px;
-  }
-  
-  
-  
+td {
+  padding: 12px;
+  vertical-align: middle;
+  font-size: 15px;
+}
 
-  .main-container {
-    display: flex;
-    align-items: flex-start; /* Aligns items at the top */
-    gap: 20px; /* Space between table and form */
+.table-hover tbody tr:hover {
+  background-color: #f1f8e9 !important;
+  transition: 0.3s ease-in-out;
+}
+
+/* ================= BUTTONS ================= */
+
+.btn-outline-primary {
+  font-size: 14px;
+  padding: 6px 12px;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+/* ================= REQUEST FORM (INLINE) ================= */
+
+.border.rounded {
+  background-color: #f8f9fa;
+}
+
+.border.rounded h6 {
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+  h3.text-center {
+    font-size: 22px;
   }
-  
-  /* Table container: Push to the left */
-  .table-container {
-    flex: 2; /* Takes more space */
+
+  .navbar-brand {
+    font-size: 26px;
   }
-  
+
+  td, th {
+    font-size: 13px;
+  }
+}

@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,56 +6,59 @@ import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-reclogin',
   templateUrl: './reclogin.component.html',
-  styleUrl: './reclogin.component.css'
+  styleUrls: ['./reclogin.component.css']
 })
-
-
-
 export class RecloginComponent implements OnInit {
-  loginForm!: FormGroup;
 
-  constructor(private formbuilder: FormBuilder, private _router: Router, private _http: HttpClient) { }
+  loginForm!: FormGroup;
+  private apiUrl = 'http://localhost:5000/api';
+
+  constructor(
+    private formbuilder: FormBuilder,
+    private router: Router,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
     this.loginForm = this.formbuilder.group({
-      email: ['', [Validators.required, Validators.email]],  // Add validators to email field
-      password: ['', [Validators.required, Validators.minLength(6)]]  // Add validators to password field
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  logIn(): void {
-    const formValues = this.loginForm.value;
-  
-    this._http.get<any>('http://localhost:3000/rsignup').subscribe(users => {
-      const matchedUser = users.find((user: any) => 
-        user.email === formValues.email && user.password === formValues.password
-      );
-  
-      if (!matchedUser) {
-        alert(' Invalid credentials, please try again');
-        return;
-      }
-  
-      alert(' Login Successful');
-  
-      //  Store recycler ID correctly
-      localStorage.setItem('recyclerId', matchedUser.id);
-      localStorage.setItem('recyclerName', matchedUser.name);
+  logIn() {
+    if (this.loginForm.invalid) return;
 
-  
-      this._router.navigate(['/recpage']); // Navigate to recpage
-      this.loginForm.reset();
-    }, (err: any) => {
-      console.error(" Login Error:", err);
-      alert(' Login Error');
-    });
+    this.http.post<any>(`${this.apiUrl}/users/login`, this.loginForm.value)
+      .subscribe({
+        next: (res) => {
+
+          // 🔴 MOST IMPORTANT LINE
+          localStorage.clear();
+
+          // ✅ Store ONLY standardized keys
+          localStorage.setItem('userId', res.userId);
+          localStorage.setItem('role', res.role); // recycler | generator
+          localStorage.setItem('name', res.name);
+          localStorage.setItem('email', res.email);
+          localStorage.setItem('contact', res.contact ?? '');
+
+          alert('Login successful');
+
+          if (res.role === 'recycler') {
+            this.router.navigate(['/recpage']);
+          } else {
+            alert('Not a recycler account');
+            localStorage.clear();
+          }
+        },
+        error: () => {
+          alert('Invalid email or password');
+        }
+      });
   }
-  
-  
-  
-  
 
-  // Getter methods to access form controls
+  // Getters
   get email() {
     return this.loginForm.get('email');
   }

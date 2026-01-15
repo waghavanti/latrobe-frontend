@@ -1,66 +1,56 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';  // Import Validators
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-
 
 @Component({
   selector: 'app-recsignup',
   templateUrl: './recsignup.component.html',
-  styleUrl: './recsignup.component.css'
+  styleUrls: ['./recsignup.component.css']
 })
-
-
-
-
 export class RecsignupComponent implements OnInit {
-  signupForm!: FormGroup;
 
-  constructor(private formbuilder: FormBuilder, private _http: HttpClient, private _router: Router) { }
+  signupForm!: FormGroup;
+  private apiUrl = 'http://localhost:5000/api';
+
+  constructor(
+    private formbuilder: FormBuilder,
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.signupForm = this.formbuilder.group({
-      name: ['', Validators.required],  // Name field is required
-      email: ['', [Validators.required, Validators.email]],  // Email must be valid
-      mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],  // Mobile must be numeric and 10 digits
-      password: ['', [Validators.required, Validators.minLength(6)]]  // Password must be at least 6 characters
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      role: ['recycler']   // ✅ THIS IS THE KEY
     });
   }
 
   signUp() {
-    if (this.signupForm.valid) {
-      this._http.post<any>('http://localhost:3000/rsignup', this.signupForm.value).subscribe(res => {
-        console.log(res);
-        alert('Signup Successful');
-        
-        // Store user data in localStorage after successful signup
-        localStorage.setItem('user2', JSON.stringify(this.signupForm.value));
-
-        this.signupForm.reset();
-        this._router.navigate(['/reclogin']);
-      }, (err: any) => {
-        console.log(err);
-        alert('Signup Error');
-      });
-    } else {
-      alert('Please fill out all fields correctly');
+    if (this.signupForm.invalid) {
+      alert('Please fill all fields correctly');
+      return;
     }
+
+    this.http.post(`${this.apiUrl}/users/register`, this.signupForm.value)
+      .subscribe({
+        next: () => {
+          alert('Recycler Signup Successful');
+          this.signupForm.reset();
+          this.router.navigate(['/reclogin']);
+        },
+        error: (err) => {
+          alert(err.error?.message || 'Signup failed');
+        }
+      });
   }
 
-  // Getter methods for easy access to form controls in the HTML template
-  get name() {
-    return this.signupForm.get('name');
-  }
-
-  get email() {
-    return this.signupForm.get('email');
-  }
-
-  get mobile() {
-    return this.signupForm.get('mobile');
-  }
-
-  get password() {
-    return this.signupForm.get('password');
-  }
+  // getters (for validation messages – KEEP UI SAME)
+  get name() { return this.signupForm.get('name'); }
+  get email() { return this.signupForm.get('email'); }
+  get mobile() { return this.signupForm.get('mobile'); }
+  get password() { return this.signupForm.get('password'); }
 }
